@@ -50,6 +50,8 @@ list<T, Allocator>::list(list<T, Allocator>&& other, const Allocator& alloc)
 
 template <typename T, class Allocator>
 list<T, Allocator>::list(std::initializer_list<T> ilist, const Allocator& alloc)
+    : m_nil(new node<T>(nullptr))
+    , m_allocator(alloc)
 {
     for (auto val : ilist) {
         push_back(val);

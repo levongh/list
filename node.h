@@ -14,9 +14,7 @@ struct node
     {
     }
 
-    explicit node(value_type value,
-         node* prev = nullptr,
-         node* next = nullptr)
+    explicit node(value_type value)
         : m_prev(this)
         , m_next(this)
         , m_value(value)
