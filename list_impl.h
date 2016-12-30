@@ -368,10 +368,10 @@ auto list<T, Allocator>::remove(const_reference_type value) -> void
     iterator last = end();
 
     while (first != last) {
-        iterator next = first;
-        if (*first == value) {
-            erase(first);
-            next = first;
+        iterator curr = first;
+        ++first;
+        if (*curr == value) {
+            erase(curr);
         }
     }
 }
@@ -384,12 +384,11 @@ auto list<T, Allocator>::remove_if(UnaryPredicate pred) -> void
     iterator last = end();
 
     while (first != last) {
-        iterator next = first;
-        ++next;
-        if (pred(*first)) {
-            erase(first);
+        iterator curr = first;
+        ++first;
+        if (pred(*curr)) {
+            erase(curr);
         }
-        first = next;
     }
 }
 

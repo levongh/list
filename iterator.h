@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <iterator>
 
 namespace eda {
@@ -19,10 +20,10 @@ class list_iterator
     /// @brief public typedefs
     /// @{
 public:
-    using self = list_iterator<T>;
-    using difference_type = std::ptrdiff_t;
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using self = list_iterator<T>;
     using pointer_type = T*;
     using reference_type = T;
     /// @}
@@ -113,10 +114,10 @@ class const_list_iterator
     /// @brief public typedefs
     /// @{
 public:
-    using self = const_list_iterator<T>;
-    using difference_type = std::ptrdiff_t;
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using self = const_list_iterator<T>;
     using pointer_type = const T*;
     using reference_type = const T&;
     /// @}
@@ -130,7 +131,7 @@ private:
     }
 
     explicit const_list_iterator(const node<T>* n)
-        : m_node(n)
+        : m_node(const_cast<node<T>*>(n))
     {
     }
 
