@@ -220,20 +220,11 @@ auto list<T, Allocator>::insert(const_iterator pos, const_reference_type& value)
     m_allocator.construct(ret_val, value);
     auto new_node = new node<T>(ret_val);
     auto current_node = pos.m_node;
-    auto next_node = current_node->m_next;
-    if (current_node->m_next == current_node->m_prev) {
-        new_node->m_next = next_node;
-        new_node->m_prev = current_node;
-        current_node->m_next = new_node;
-        current_node->m_prev = new_node;
-    } else {
-        new_node->m_next = next_node;
-        new_node->m_prev = current_node;
-        current_node->m_next = new_node;
-        next_node->m_prev = new_node;
-    }
-
-    return iterator {current_node};
+    new_node->m_next = current_node;
+    new_node->m_prev = current_node->m_prev;
+    current_node->m_prev->m_next = new_node;
+    current_node->m_prev = new_node;
+    return iterator {new_node};
 }
 
 template <typename T, class Allocator>
@@ -325,14 +316,13 @@ template <typename T, class Allocator>
 template <class... Args>
 auto list<T, Allocator>::emplace_back(Args&&... args) -> void
 {
-    //investigate end() --end()
-    insert(--end(), std::forward<Args>(args) ...);
+    insert(end(), std::forward<Args>(args) ...);
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::pop_back() -> void
 {
-    erase(--end());
+    erase(end());
 }
 
 
@@ -406,21 +396,19 @@ auto list<T, Allocator>::remove_if(UnaryPredicate pred) -> void
 template <typename T, class Allocator>
 auto list<T, Allocator>::unique() -> void
 {
-    iterator first = begin();
-    iterator last = end();
-
-    if (first == last) {
+    if (empty()) {
         return;
     }
 
-    iterator next = first;
-    while (++next != last) {
-        if (*first == *last) {
-            erase(next);
+    iterator current = begin();
+    ++current;
+
+    while (current != end()) {
+        if (*current == *(--current)) {
+            current = erase(++current);
         } else {
-            first = next;
+            ++(++current);
         }
-        next = first;
     }
 }
 
@@ -428,19 +416,18 @@ template <typename T, class Allocator>
 template <class BinaryPredicate>
 auto list<T, Allocator>::unique(BinaryPredicate pred) -> void
 {
-    iterator first = begin();
-    iterator last = end();
-
-    if (first == last) {
+    if (empty()) {
         return;
     }
-    iterator next = first;
-    while (++next != last) {
-        if (pred(*first, *last)) {
-            erase(next);
+
+    iterator current = begin();
+    ++current;
+
+    while (current != end()) {
+        if (pred(*current, *(--current))) {
+            current = erase(++current);
         } else {
-            first = next;
+            ++(++current);
         }
-        next = first;
     }
 }
