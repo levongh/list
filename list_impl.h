@@ -194,7 +194,14 @@ auto list<T, Allocator>::empty() const noexcept -> bool
 template <typename T, class Allocator>
 auto list<T, Allocator>::size() const noexcept -> size_type
 {
-    return std::distance(begin(), end());
+    auto first = begin();
+    auto second = end();
+    typename const_iterator::difference_type diff = 0;
+    while (first != second) {
+        ++first;
+        ++diff;
+    }
+    return diff;
 }
 
 template <typename T, class Allocator>
