@@ -23,7 +23,7 @@ public:
     using difference_type = std::ptrdiff_t;
     using self = list_iterator<T>;
     using pointer = T*;
-    using reference = T;
+    using reference = T&;
     /// @}
 
     /// @brief constructors
@@ -142,7 +142,7 @@ private:
     /// @brief operators
     /// @{
 public:
-    reference& operator*() const
+    reference operator*() const
     {
         return m_node->m_value;
     }

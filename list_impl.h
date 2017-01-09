@@ -202,14 +202,17 @@ auto list<T, Allocator>::max_size() const noexcept -> size_type
 {
     return std::numeric_limits<size_type>::max();
 }
-//TODO
+
 template <typename T, class Allocator>
 auto list<T, Allocator>::clear() noexcept -> void
 {
-    auto it = begin();
-    while (it != end()) {
-        //m_allocator.deallocate(it.m_node, 1);
-        ++it;
+    auto first = begin();
+    auto second = end();
+    while (first != second) {
+        auto to_del = first.m_node;
+        m_allocator.destroy(to_del);
+        m_allocator.deallocate(to_del->m_value, 1);
+        ++first;
     }
 }
 
@@ -271,7 +274,9 @@ auto list<T, Allocator>::erase(iterator pos) -> iterator
     to_del->m_next->m_prev = to_del->m_prev;
     to_del->m_prev->m_next = to_del->m_next;
     auto to_return = to_del->m_next;
-    //TODO
+
+    m_allocator.destroy(to_del);
+    m_allocator.deallocate(to_del->m_value, 1);
     return iterator{to_return};
 }
 
@@ -282,7 +287,6 @@ auto list<T, Allocator>::erase(const_iterator pos) -> iterator
     to_del->m_next->m_prev = to_del->m_prev;
     to_del->m_prev->m_next = to_del->m_next;
     auto to_return = to_del->m_next;
-    //TODO
     return const_iterator{to_return};
 }
 
@@ -344,6 +348,7 @@ auto list<T, Allocator>::pop_front() -> void
 {
     erase(begin());
 }
+
 //TODO
 template <typename T, class Allocator>
 auto list<T, Allocator>::resize(size_type count) -> void

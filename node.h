@@ -3,7 +3,7 @@
 template <typename T>
 struct node
 {
-    using value_type = const T*;
+    using value_type = T*;
 
     explicit node()
         : m_prev(this)
@@ -12,11 +12,13 @@ struct node
     {
     }
 
-    explicit node(value_type value)
+    template <typename... Args>
+    node(Args... args)
         : m_prev(this)
         , m_next(this)
-        , m_value(value)
-    {}
+        , m_value(std::forward<Args>(args)...)
+    {
+    }
 
     node(const node& n) = default;
     node& operator=(const node& n) = default;

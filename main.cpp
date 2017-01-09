@@ -21,6 +21,15 @@ int main()
     for (auto it : l ) {
         std::cout << it << std::endl;
     }
+    std::cout << zrlam.back() <<std::endl;
+    zrlam.back() = 10;
+    std::cout << zrlam.back() <<std::endl;
+    l.erase(l.begin());
+    l.erase(l.begin());
+    std::cout << "unique" << std::endl;
+    for (auto it : l ) {
+        std::cout << it << std::endl;
+    }
 
     return 0;
 }
