@@ -3,8 +3,6 @@
 #include <cstddef>
 #include <iterator>
 
-namespace eda {
-
 template <typename I>
 class const_list_iterator;
 
@@ -24,8 +22,8 @@ public:
     using value_type = T;
     using difference_type = std::ptrdiff_t;
     using self = list_iterator<T>;
-    using pointer_type = T*;
-    using reference_type = T;
+    using pointer = T*;
+    using reference = T;
     /// @}
 
     /// @brief constructors
@@ -47,12 +45,12 @@ public:
     /// @brief operators
     /// @{ 
  public:
-    reference_type operator*() const
+    reference operator*() const
     {
         return *m_node->m_value;
     }
 
-    pointer_type operator->() const
+    pointer operator->() const
     {
         return m_node->m_value;
     }
@@ -118,8 +116,8 @@ public:
     using value_type = T;
     using difference_type = std::ptrdiff_t;
     using self = const_list_iterator<T>;
-    using pointer_type = const T*;
-    using reference_type = const T&;
+    using pointer = const T*;
+    using reference = const T&;
     /// @}
 
     /// @brief constructos
@@ -144,12 +142,12 @@ private:
     /// @brief operators
     /// @{
 public:
-    reference_type& operator*() const
+    reference& operator*() const
     {
         return m_node->m_value;
     }
 
-    pointer_type operator->() const
+    pointer operator->() const
     {
         return *m_node.m_value;
     }
@@ -201,5 +199,3 @@ private:
 
     node<T>* m_node;
 };
-
-} // namespace eda

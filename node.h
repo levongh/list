@@ -1,7 +1,5 @@
 #pragma once
 
-namespace eda {
-
 template <typename T>
 struct node
 {
@@ -29,5 +27,3 @@ struct node
     node* m_next;
     value_type m_value;
 };
-
-} //namespace eda

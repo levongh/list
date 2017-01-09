@@ -8,8 +8,6 @@
 #include "node.h"
 #include "iterator.h"
 
-namespace eda {
-
 template <typename T, class Allocator = std::allocator<T> >
 class list
 {
@@ -177,4 +175,3 @@ private:
 
 #include "list_impl.h"
 
-}
