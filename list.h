@@ -40,6 +40,8 @@ public:
     {
     }
 
+    list_base(const list_base&) = default;
+
     list_base(const allocator_type& alloc)
         : m_base_impl(alloc)
     {
@@ -102,8 +104,11 @@ public:
     template <class InputIt>
     list(InputIt first, InputIt last, const Allocator& alloc = Allocator());
 
-    list(list<T, Allocator>&& other);
-    list(list<T, Allocator>&& other, const Allocator& alloc);
+    list(const list&) = default;
+    list(list&& other) = default;
+    list& operator= (const list&) = default;
+    list& operator= (list&&) = default;
+    list(list&& other, const Allocator& alloc);
 
     list(std::initializer_list<T> ilist, const Allocator& alloc = Allocator());
 
@@ -113,13 +118,13 @@ public:
     /// @brief member functions
     /// @{
 public:
+    using list_base<value_type, allocator_type>::get_allocator;
+
+public:
     void assign(size_type count, const_reference_type value);
 
     template<class InputIt>
     void assign(InputIt first, InputIt last);
-
-    allocator_type& get_allocator();
-    const allocator_type& get_allocator() const;
     /// @}
 
     /// @element access
@@ -234,9 +239,6 @@ public:
     template <class Compare>
     void sort(Compare comp);*/
     /// @}
-private:
-//    node<T>* m_nil;
-//    Allocator m_allocator;
 };
 
 #include "list_impl.h"

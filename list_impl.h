@@ -28,18 +28,10 @@ list<T, Allocator>::list(InputIt first, InputIt last, const Allocator& alloc)
 }
 
 template <typename T, class Allocator>
-list<T, Allocator>::list(list&& other)
+list<T, Allocator>::list(list&& other, const Allocator& alloc)
     : list_base<T, Allocator>(std::forward<list_base>(other))
 {
-//    other.m_nil->m_prev = nullptr;
-//    other.m_nil->m_next = nullptr;
-}
-
-template <typename T, class Allocator>
-list<T, Allocator>::list(list<T, Allocator>&& other, const Allocator& alloc)
-    : list_base<T, Allocator>(std::forward<list_base>(other))
-{
-    this->get_allocator() = other.get_allocator();
+    get_allocator() = alloc;
 //    other->m_nil->m_prev = nullptr;
 //    other->m_nil->m_next = nullptr;
 }
@@ -172,18 +164,6 @@ template <typename T, class Allocator>
 auto list<T, Allocator>::crend() const noexcept -> const_reverse_iterator
 {
     return cend();
-}
-
-template <typename T, class Allocator>
-auto list<T, Allocator>::get_allocator() const -> const allocator_type&
-{
-    return static_cast<list_base<T, Allocator>* >(this)->get_allocator();
-}
-
-template <typename T, class Allocator>
-auto list<T, Allocator>::get_allocator() -> allocator_type&
-{
-    return static_cast<list_base<T, Allocator>* >(this)->get_allocator();
 }
 
 template <typename T, class Allocator>
