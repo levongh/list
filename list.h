@@ -8,8 +8,73 @@
 #include "node.h"
 #include "iterator.h"
 
+template <typename T, class Allocator>
+class list_base
+{
+protected:
+    using allocator_type = Allocator;
+
+    struct alloc_impl : public Allocator
+    {
+        node<T>* m_nil;
+        alloc_impl()
+            : Allocator()
+            , m_nil(new node<T>(nullptr))
+        {
+        }
+
+        alloc_impl(const Allocator& alloc)
+            : Allocator(alloc)
+            , m_nil(new node<T>(nullptr))
+        {
+        }
+        ~alloc_impl()
+        {
+            delete m_nil;
+        }
+    };
+
+public:
+    list_base()
+        : m_base_impl()
+    {
+    }
+
+    list_base(const allocator_type& alloc)
+        : m_base_impl(alloc)
+    {
+    }
+
+    list_base(list_base&& other)
+        : m_base_impl(other.get_allocator())
+    {
+        // write swap function for node data swapping
+        //swap(m_nil, other.m_nil);
+    }
+
+    ~list_base() = default;
+
+
+public:
+
+    allocator_type& get_allocator()
+    {
+        return m_base_impl;
+    }
+
+    const allocator_type& get_allocator() const
+    {
+        return m_base_impl;
+    }
+
+
+protected:
+    alloc_impl m_base_impl;
+};
+
+
 template <typename T, class Allocator = std::allocator<T> >
-class list
+class list : public list_base<T, Allocator>
 {
 public:
     using value_type = T;
@@ -53,7 +118,8 @@ public:
     template<class InputIt>
     void assign(InputIt first, InputIt last);
 
-    allocator_type get_allocator() const;
+    allocator_type& get_allocator();
+    const allocator_type& get_allocator() const;
     /// @}
 
     /// @element access
@@ -169,8 +235,8 @@ public:
     void sort(Compare comp);*/
     /// @}
 private:
-    node<T>* m_nil;
-    Allocator m_allocator;
+//    node<T>* m_nil;
+//    Allocator m_allocator;
 };
 
 #include "list_impl.h"

@@ -2,8 +2,7 @@
 
 template <typename T, class Allocator>
 list<T, Allocator>::list(const Allocator& alloc)
-    : m_nil(new node<T>(nullptr))
-    , m_allocator(alloc)
+    : list_base<T, Allocator>()
 {
 }
 
@@ -11,8 +10,7 @@ template <typename T, class Allocator>
 list<T, Allocator>::list(size_type count,
                         const_reference_type value,
                         const Allocator& alloc)
-    : m_nil(new node<T>(nullptr))
-    , m_allocator(alloc)
+    : list_base<T, Allocator>(alloc)
 {
     for (size_type i = 0; i < count; ++i) {
         push_back(value);
@@ -22,8 +20,7 @@ list<T, Allocator>::list(size_type count,
 template <typename T, class Allocator>
 template <class InputIt>
 list<T, Allocator>::list(InputIt first, InputIt last, const Allocator& alloc)
-    : m_nil(new node<T>(nullptr))
-    , m_allocator(alloc)
+    : list_base<T, Allocator>(alloc)
 {
     for (const auto& iter = first; iter != last; ++iter) {
         push_back(iter);
@@ -32,26 +29,24 @@ list<T, Allocator>::list(InputIt first, InputIt last, const Allocator& alloc)
 
 template <typename T, class Allocator>
 list<T, Allocator>::list(list&& other)
-    : m_nil(other.m_nil)
-    , m_allocator(other.m_allocator)
+    : list_base<T, Allocator>(std::forward<list_base>(other))
 {
-    other.m_nil->m_prev = nullptr;
-    other.m_nil->m_next = nullptr;
+//    other.m_nil->m_prev = nullptr;
+//    other.m_nil->m_next = nullptr;
 }
 
 template <typename T, class Allocator>
 list<T, Allocator>::list(list<T, Allocator>&& other, const Allocator& alloc)
-    : m_nil(other.m_nil)
-    , m_allocator(alloc)
+    : list_base<T, Allocator>(std::forward<list_base>(other))
 {
-    other->m_nil->m_prev = nullptr;
-    other->m_nil->m_next = nullptr;
+    this->get_allocator() = other.get_allocator();
+//    other->m_nil->m_prev = nullptr;
+//    other->m_nil->m_next = nullptr;
 }
 
 template <typename T, class Allocator>
 list<T, Allocator>::list(std::initializer_list<T> ilist, const Allocator& alloc)
-    : m_nil(new node<T>(nullptr))
-    , m_allocator(alloc)
+    : list_base<T, Allocator>(alloc)
 {
     for (auto val : ilist) {
         push_back(val);
@@ -86,37 +81,37 @@ auto list<T, Allocator>::assign(InputIt first, InputIt last) -> void
 template <typename T, class Allocator>
 auto list<T, Allocator>::front() -> reference_type
 {
-    return *(m_nil->m_next->m_value);
+    return *(this->m_base_impl.m_nil->m_next->m_value);
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::front() const -> const_reference_type
 {
-    return *(m_nil->m_next->m_value);
+    return *(this->m_base_impl.m_nil->m_next->m_value);
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::back() -> reference_type
 {
-    return *(m_nil->m_prev->m_value);
+    return *(this->m_base_impl.m_nil->m_prev->m_value);
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::back() const -> const_reference_type
 {
-    return *(m_nil->m_prev->m_value);
+    return *(this->m_base_impl.m_nil->m_prev->m_value);
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::begin() noexcept -> iterator
 {
-    return iterator{m_nil->m_next};
+    return iterator{this->m_base_impl.m_nil->m_next};
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::begin() const noexcept -> const_iterator
 {
-    return const_iterator{m_nil->m_next};
+    return const_iterator{this->m_base_impl.m_nil->m_next};
 }
 
 template <typename T, class Allocator>
@@ -128,13 +123,13 @@ auto list<T, Allocator>::cbegin() const noexcept -> const_iterator
 template <typename T, class Allocator>
 auto list<T, Allocator>::end() noexcept -> iterator
 {
-    return iterator{m_nil};
+    return iterator{this->m_base_impl.m_nil};
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::end() const noexcept -> const_iterator
 {
-    return const_iterator{m_nil};
+    return const_iterator{this->m_base_impl.m_nil};
 }
 
 template <typename T, class Allocator>
@@ -146,13 +141,13 @@ auto list<T, Allocator>::cend() const noexcept -> const_iterator
 template <typename T, class Allocator>
 auto list<T, Allocator>::rbegin() noexcept -> reverse_iterator
 {
-    return iterator{m_nil->m_prev};
+    return iterator{this->m_base_impl.m_nil->m_prev};
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::rbegin() const noexcept -> const_reverse_iterator
 {
-    return const_iterator{m_nil->m_prev};
+    return const_iterator{this->m_base_impl.m_nil->m_prev};
 }
 
 template <typename T, class Allocator>
@@ -180,15 +175,21 @@ auto list<T, Allocator>::crend() const noexcept -> const_reverse_iterator
 }
 
 template <typename T, class Allocator>
-auto list<T, Allocator>::get_allocator() const -> allocator_type
+auto list<T, Allocator>::get_allocator() const -> const allocator_type&
 {
-    return m_allocator;
+    return static_cast<list_base<T, Allocator>* >(this)->get_allocator();
+}
+
+template <typename T, class Allocator>
+auto list<T, Allocator>::get_allocator() -> allocator_type&
+{
+    return static_cast<list_base<T, Allocator>* >(this)->get_allocator();
 }
 
 template <typename T, class Allocator>
 auto list<T, Allocator>::empty() const noexcept -> bool
 {
-    return m_nil->m_next == m_nil;
+    return this->m_base_impl.m_nil->m_next == this->m_base_impl.m_nil;
 }
 
 template <typename T, class Allocator>
@@ -210,8 +211,8 @@ auto list<T, Allocator>::clear() noexcept -> void
     auto second = end();
     while (first != second) {
         auto to_del = first.m_node;
-        m_allocator.destroy(to_del);
-        m_allocator.deallocate(to_del->m_value, 1);
+        get_allocator().destroy(to_del);
+        get_allocator().deallocate(to_del->m_value, 1);
         ++first;
     }
 }
@@ -219,8 +220,8 @@ auto list<T, Allocator>::clear() noexcept -> void
 template <typename T, class Allocator>
 auto list<T, Allocator>::insert(const_iterator pos, const_reference_type& value) -> iterator
 {
-    auto ret_val = m_allocator.allocate(1);
-    m_allocator.construct(ret_val, value);
+    auto ret_val = get_allocator().allocate(1);
+    get_allocator().construct(ret_val, value);
     auto new_node = new node<T>(ret_val);
     auto current_node = pos.m_node;
     new_node->m_next = current_node;
@@ -262,8 +263,7 @@ template <typename T, class Allocator>
 template <class... Args>
 auto list<T, Allocator>::emplace(const_iterator pos, Args&&... args) -> iterator
 {
-    auto new_node = m_allocator.allocate(std::forward<Args>(args) ...);
-    auto iter = insert(pos, new_node);
+    auto iter = insert(pos, std::forward<Args>(args) ...);
     return iter;
 }
 
@@ -275,8 +275,8 @@ auto list<T, Allocator>::erase(iterator pos) -> iterator
     to_del->m_prev->m_next = to_del->m_next;
     auto to_return = to_del->m_next;
 
-    m_allocator.destroy(to_del);
-    m_allocator.deallocate(to_del->m_value, 1);
+    get_allocator().destroy(to_del);
+    get_allocator().deallocate(to_del->m_value, 1);
     return iterator{to_return};
 }
 
