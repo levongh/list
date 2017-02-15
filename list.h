@@ -1,5 +1,8 @@
 #pragma once
 
+/**
+ *  @author Levon Ghukasyan
+ */
 #include <memory>
 #include <limits>
 #include <initializer_list>
