@@ -53,8 +53,7 @@ public:
     list_base(list_base&& other)
         : m_base_impl(other.get_allocator())
     {
-        // write swap function for node data swapping
-        //swap(m_nil, other.m_nil);
+        std::swap(m_base_impl.m_nil, other.m_base_impl.m_nil);
     }
 
     ~list_base() = default;
