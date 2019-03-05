@@ -219,27 +219,27 @@ public:
     template <typename Compare>
     void merge(list&& other, Compare cmop);
 
-    //void splice(const_iterator pos, lsit&& other);
+    //void splice(const_iterator pos, list&& other);
 
-    //void splice(const_iterator pos, lsit&& other, const_iterator it);
+    //void splice(const_iterator pos, list&& other, const_iterator it);
 
-    //void splice(const_iterator pos, lsit&& other, const_iterator first, const_iterator last);
+    //void splice(const_iterator pos, list&& other, const_iterator first, const_iterator last);
 
     void remove(const_reference_type value);
 
     template <class UnaryPredicate>
     void remove_if(UnaryPredicate pred);
 
-    //void reverse();
+    void reverse();
 
     void unique();
 
     template <class BinaryPredicate>
     void unique(BinaryPredicate pred);
 
-    /*void sort();
+    void sort();
     template <class Compare>
-    void sort(Compare comp);*/
+    void sort(Compare comp);
     /// @}
 };
 
